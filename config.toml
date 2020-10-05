@@ -1,7 +1,7 @@
 # Site settings
 baseURL = "https://guilhermebaldanzi.netlify.app"
 languageCode = "en-us"
-title = "Forty"
+title = "Guilherme Baldanzi"
 theme = "forty"
 
 # Enter your tracking code to enable Google Analytics
@@ -20,7 +20,7 @@ disqusShortname = ""
 
   # Provide your metadata here.
   name = "Guilherme Baldanzi"
-  description = "Your description"
+  description = "My personal website"
 
   # Link custom assets relative to /static
   custom_css = []
@@ -44,20 +44,20 @@ disqusShortname = ""
     # logo = "logo.png"
 
     [[params.navigation.links]]
-      name = "Home"
+      name = "About Me"
       url = "#"
 
     [[params.navigation.links]]
-      name = "Blogs"
+      name = "My previous work"
       url = "blogs"
 
-    [[params.navigation.links]]
-      name = "Generic Blog"
-      url = "blogs/ipsum"
+#    [[params.navigation.links]]
+#      name = "Generic Blog"
+#      url = "blogs/ipsum"
 
-    [[params.navigation.links]]
-      name = "Elements"
-      url = "elements.html"
+#    [[params.navigation.links]]
+#      name = "Elements"
+#      url = "elements.html"
 
     # Add custom links here by uncommenting code below. To remove links just delete
     # the [[params.navigation.links]] map associated with that link. Copy and paste
@@ -207,10 +207,10 @@ disqusShortname = ""
 
     [[params.footer.social]]
       icon = "fa-linkedin"
-      url= "www.linkedin.com/in/guilherme-baldanzi"
+      url= "https://www.linkedin.com/in/guilherme-baldanzi/"
       label = "LinkedIn"
 
-    [[params.footer.quicklinks]]
-      text = "Design: "
-      url= "https://www.html5up.net"
-      alt = "HTML5 UP"
+#    [[params.footer.quicklinks]]
+#    text = "Design: "
+#    url= "https://www.html5up.net"
+#    alt = "HTML5 UP"
