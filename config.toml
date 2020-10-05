@@ -98,8 +98,8 @@ disqusShortname = ""
       url = "blogs/blog5"
 
     [[params.tiles.showcase]]
-      title = "Tempus"
-      subtitle = "Feugiat Amet Tempus"
+      title = "Stocks Risk x Return Analysis"
+      subtitle = "S&P500 vs Financials - 10 years Analysis"
       image = "pic02.jpg"
       url = "blogs/tempus"
 
