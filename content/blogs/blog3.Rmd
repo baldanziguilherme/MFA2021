@@ -7,6 +7,266 @@ description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis mag
 draft: false
 image: pic08.jpg
 keywords: ""
-slug: tempus
-title: Tempus
+slug: blog3
+title: GDP components over time and among BRICS
 ---
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+```
+
+
+
+# Challenge 2:GDP components over time and among countries
+
+
+
+At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
+
+
+The GDP data we will look at is from the [United Nations' National Accounts Main Aggregates Database](https://unstats.un.org/unsd/snaama/Downloads), which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country's GDP. The file we will work with is [GDP and its breakdown at constant 2010 prices in US Dollars](http://unstats.un.org/unsd/amaapi/api/file/6) and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised
+
+Let's get the data from our source:
+
+```{r read_GDP_data}
+
+UN_GDP_data  <-  read_excel(here::here("data", "Download-GDPconstant-USD-countries.xls"),
+                sheet="Download-GDPconstant-USD-countr",
+                skip=2)
+
+```
+
+
+ The first thing we need to do is to tidy the data, as it is in wide format and you must make it into long, tidy format. We will express all figures in billions, and we want to rename the indicators into something shorter.
+
+
+```{r reshape_GDP_data}
+#Creating the vector with the GDP components
+components <- c("Gross capital formation", "Exports of goods and services",     
+"General government final consumption expenditure", "Household consumption expenditure (including Non-profit institutions serving households)", "Imports of goods and services","Gross Domestic Product (GDP)")
+
+#Changing the dataframe from a wide to a long format
+tidy_GDP_data  <-  UN_GDP_data %>% 
+  pivot_longer(cols = (4:51), names_to = "Year", values_to = "Sum") %>% 
+  mutate("Sum" = Sum/1e9) %>% 
+  mutate(Year = as.numeric(Year))
+
+data_renamed<- tidy_GDP_data%>%
+ filter(IndicatorName %in% components) %>%   
+pivot_wider(names_from = IndicatorName,values_from = Sum)
+  
+#renaming columns to a shorter name
+names(data_renamed)[4:9] <- c("HCE","GOV","GCF","EGS","IGS","GDP") 
+
+
+glimpse(data_renamed)
+```
+
+Now, for our analysis, we are going to choose a specific group of countries that have similarities: The BRICS.
+
+B. Brazil
+R. Russia
+I. India
+C. China
+S. South Africa
+
+```{r choose_country}
+# Choosing the countries: Emerging countries - The BRICS
+
+country_list <- c("Brazil","India", "China", "Russian Federation", "South Africa")
+
+```
+
+
+Now we are going to plot a graph for each Country that shows the figures of the five different components of the GDP along the years 1970 - 2017:
+
+1. Gross Capital Formation
+2. Exports
+3. Government Expenditure
+4. Household Expenditure
+5. Imports
+
+
+```{r gdp1, out.width="100%"}
+
+components <- c("Gross capital formation",
+                "Exports of goods and services",     
+                "General government final consumption expenditure",
+                "Household consumption expenditure (including Non-profit institutions serving households)",
+                "Imports of goods and services")
+
+components2 <- c("Gross Capital Formation",
+                 "Exports",
+                 "Government Expenditure",
+                 "Household Expenditure",
+                 "Imports")
+
+BRICS_GDP <- tidy_GDP_data %>% 
+  filter(Country %in% country_list) %>%
+  filter(IndicatorName %in% components) 
+
+
+gdp1 <- ggplot(data = BRICS_GDP, aes(x = Year, y = Sum, group = IndicatorName, color = IndicatorName)) +
+  geom_line(size = 0.7)+
+  facet_wrap(~Country)+
+  scale_color_manual(
+            values=c("#078E10", "#4E53EE", "#F0791D", "#17D0C3", "#F50A48"),
+            name="GDP Components",
+            labels= components2)+
+            labs(x = "", y = "USD Billions",
+            title = "BRICS - GDP Components Analysis",
+            subtitle = "From 1970 to 2017")+
+  theme(legend.position = "top")+
+  theme_bw()+ 
+  theme(plot.title = element_text(face = "bold"))
+
+#save the graph
+ggsave("gdp1.jpg",plot=gdp1,width = 15,height = 10, path = here::here("images"))
+
+#place the graph in code
+knitr::include_graphics(here::here("images", "gdp1.jpg"))
+
+```
+
+>Some observations about the graph above:
+
+>1. We have data from The Russian Federation just from 1990 ahead when the CCCP terminated
+ 
+>2. It is impressive the growth of all figures for China mainly in the begging in 2000
+
+>3. South Africa is way smaller than the other economies
+ 
+>4. In the last 10 years the compounding effect is becoming more visible in India
+
+>5. The growth of Brazil doesn't seem too exciting but is more steady
+
+______________________________________________________________________________________________________
+
+
+Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
+
+
+```{r gdp_difference, out.width="100%"}
+
+components3 <- c("Gross capital formation", "Exports of goods and services",
+                 "General government final consumption expenditure",
+                 "Household consumption expenditure (including Non-profit institutions serving households)",
+                 "Imports of goods and services",
+                 "Gross Domestic Product (GDP)")
+
+BRICS_GDP <- data_renamed %>% 
+  filter(Country %in% country_list)
+
+BRICS_GDP_1<- BRICS_GDP %>% 
+  mutate("Net_export" = EGS - IGS ) 
+
+BRICS_GDP_2 <- BRICS_GDP_1 %>% 
+  mutate("GDP_calculated" = HCE + GOV + GCF + Net_export)
+BRICS_GDP_3 <- BRICS_GDP_2 %>% 
+  mutate("GDP_difference_per" = (GDP - GDP_calculated) / GDP)
+
+gdp_difference <- ggplot(data = BRICS_GDP_3, aes(x = Year, y = GDP_difference_per)) + 
+  geom_line(color = "#211D1D", size = 1.0)+
+  facet_wrap(~Country)+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(-0.13,0.15))+
+  theme_bw()+
+  labs(y = " Delta released - calculated GDP ",
+       title = "Difference between Released GDP and calculated GBP",
+       subtitle = "All BRICS suffer with variability over realeased and calculated GBP")+ 
+      theme(plot.title = element_text(face = "bold"))
+
+#save the graph
+ggsave("gdp3.jpg",plot=gdp_difference,width = 15,height = 10, path = here::here("images"))
+
+#place the graph in code
+knitr::include_graphics(here::here("images", "gdp3.jpg"))
+```
+
+>In the above graph is possible to observe a lot of mismatch between the GDP figures released by governments and the GDP calculated by ourselves.
+ It shows why investors are more careful before invest in Developing Economies. But the good news is the the differences are converging towards zero with the years.
+
+__________________________________________________________________________________________________________________________________________________________
+
+Now we want to observe how the different components of the GDP changed through the years for each one of the BRICS. 
+On this graph is possible to see if the country had surplus of deficit, measured by net exports. It is also possible to observe the participation of the government on the economy through a expansionary or contractionary expenditure policy.
+
+
+```{r gdp2, out.width="100%"}
+
+components4 <- c("Government Expenditure", "Gross capital formation", "Household Expenditure", "Net Exports")
+
+BRICS_GDP_4 <- BRICS_GDP_3 %>% 
+  mutate("GOV_per" = (GOV) / GDP) %>% 
+  mutate("GCF_per" = (GCF) / GDP) %>% 
+  mutate("HCE_per" = (HCE) / GDP) %>% 
+  mutate("Net_export_per" = (Net_export) / GDP) %>% 
+  select(Country, Year,  GOV_per,GCF_per,HCE_per,Net_export_per)
+
+BRICS_GDP_5 <- BRICS_GDP_4 %>% 
+  pivot_longer(cols = (3:6), names_to = "Components", values_to = "Proportion" ) 
+
+gdp2 <- ggplot(data = BRICS_GDP_5, aes(x = Year, y = Proportion, group = Components, color = Components)) +
+  geom_line(size = 1)+
+  facet_wrap(~Country)+
+  scale_color_manual( values=c("#F0791D", "#078E10", "#17D0C3", "#4E53EE"),
+                      name="GDP Components",
+                      labels= components4)+
+       labs(x = "Year", y = "% of the GDP",
+       title = "BRICS - Expansionist or Contracionist Fiscal Policy?",
+       subtitle = "Diffent GDP compositions depending on Country and Time",
+       caption = "Source: United Nations") +
+  theme(legend.position = "right")+
+  theme_bw()+
+  coord_equal(ratio = 80) + 
+  theme(plot.title = element_text(face = "bold"))
+
+#save the graph
+ggsave("gdp2.jpg",plot=gdp2,width = 15,height = 10, path = here::here("images"))
+
+#place the graph in code
+knitr::include_graphics(here::here("images", "gdp2.jpg"))
+
+```
+
+
+>The graph above is super interesting because it give us so many information about the Economy and Politics about each country:
+
+>1. Brazil: The participation of the household consumption in economy is growing because of the growth of per-capta GDP and the broader access of credit for the families. The government expenditure is slowly going down. The fact is that the Debt/GDP of the country is already high and the government need primary surpluses to pay this debt. Brazil is a big commodities exporters but the levels of net exports are volatile because it has big influence of FX rates and commodities demand.
+
+>2. China: Since the 70's the government took responsibility to modernize de country and create the infrastructure necessary to economic development and since 2002-2003 the government expenditure is the largest amount of the GDP. In the last 8 years the household consumption is increasing slowly in relation to Government expenditure. Gross capital formation is stable and the net exports depends of the FX rate and prices. 
+
+>3. India: Until 1990 the distribution of the GDP components stayed almost steady. From 2000 onward, the government increase it's expenditures, probably trying to follow a path like China, investing on infrastructure to increase the productivity and growth of the GDP of the country.
+
+>4. Russia: From 1990-2000 the country had a major change after the fall of CCCP going to a open economy. The share of government expenditure dropped and the families expenditure increased. Since 2005, the trends seems to be maintained expect of net exports because Russia exports Oil&Gas and the price of the commodity is volatile and politics are involved.
+
+>5. South Africa: The country saw the ascension of household expenditure from 45% (1970) to ~60% (2015). The gross capital formation seems to be stabilized around 20% and the government expenditures have a negative correlation to the net exports.
