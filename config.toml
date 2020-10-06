@@ -116,17 +116,17 @@ disqusShortname = ""
       image = "pic04.jpg"
       url = "blogs/ipsum"
 
-    [[params.tiles.showcase]]
-      title = "Consequat"
-      subtitle = "Ipsum Dolor Sit Amet"
-      image = "pic05.jpg"
-      url = "blogs/ipsum"
+#    [[params.tiles.showcase]]
+#     title = "Consequat"
+#      subtitle = "Ipsum Dolor Sit Amet"
+#    image = "pic05.jpg"
+#    url = "blogs/ipsum"
 
-    [[params.tiles.showcase]]
-      title = "Etiam"
-      subtitle = "Feugiat Amet Tempus"
-      image = "pic06.jpg"
-      url = "blogs/ipsum"
+#    [[params.tiles.showcase]]
+#    title = "Etiam"
+#    subtitle = "Feugiat Amet Tempus"
+#    image = "pic06.jpg"
+#    url = "blogs/ipsum"
     # You can make more showcases by copy and pasting the code above
 
   [params.blog]
@@ -136,37 +136,23 @@ disqusShortname = ""
     # For more informtion take a look at the README.
     # To add more blogs just copy and paste the code.
 
-  # Section Type Two
+  # Section Type Two 
   [params.two]
     enable = true
     title = "About Me"
-    subtitle = "" 
-    
-    I'm Brazilian, I graduated in 2019 as an Production Engineer at 
+    subtitle = """I'm Brazilian, I graduated in 2019 as an Production Engineer at 
     Universidade Federal Fluminense. Before my graduation I had the opportunity 
-    to live in Minnesota (USA) for a semester as a Exchange Student.
-
-  During graduation I was able to have a good performance at my course but also 
-  did different extra-curricular activities such as financial courses at other 
-  universities (FGV and Ibmec), I did other Exchange Student Programme to Madrid
-  (Spain) during a semester to study Economics and Finance and did a Summer Internship
-  and Full Time Internship at BTG Pactual, the largest investment bank of Latin America.
-
-  At BTG Pactual I had a great opportunity to learn from smart and intelligent
-  people and confirm my cultural fit for companies that value hands on, hard working
-  and a meritocratic environment.
-  These values plus a great amount of curiosity drove me through the years to achieve
-  top places in the evaluation process of my former employer, recognized in the courses
-  that I took (4th place in the financial markets course of BTG Pactual among 180+
-  Analysts of the company) and get top positions in international competitions such
-  as Strategic Challenge of Bain & Company where my team reached the Latin America 
-  Final of the case competition.
-
-  Currently I'm enrolled in the Master in Financial Analysis (MFA) at London Business
+    to live in Minnesota (USA) for a semester as a Exchange Student. I also did other
+    Exchange Student Programme to Madrid (Spain) during a semester to study Economics and Finance.
+    \n After that, I spent almost 3 years at BTG Pactual (Summer Internship, Internship and Analyst),
+    the largest investment bank of Latin America.
+  \n Currently, I'm enrolled in the Master in Financial Analysis (MFA) at London Business
   School seeking for more knowledge, contact and exchange of ideas with other bright
   people from different countries and cultures, and a career transition to the Buy
   Side. I would like to have the opportunity to work with great and open-minded people
-  where the best arguments and investment thesis always wins.  buttonText = "Get Started"
+  where the best arguments and investment thesis always wins."""
+ 
+  buttonText = "Get Started"
     url = "blogs"
 
 
