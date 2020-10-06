@@ -96,6 +96,12 @@ disqusShortname = ""
       subtitle = "Click to See my CV"
       image = "pic11.jpg"
       url = "blogs/blog2"
+      
+    [[params.tiles.showcase]]
+      title = "BRICS GDP Analysis"
+      subtitle = "From 1970 to 2017 "
+      image = "pic16.jpg" 
+      url = "blogs/blog3"
 
     [[params.tiles.showcase]]
       title = "Stocks Risk x Return Analysis"
@@ -103,11 +109,6 @@ disqusShortname = ""
       image = "pic13.jpg"
       url = "blogs/blog1"
 
-    [[params.tiles.showcase]]
-      title = "BRICS GDP Analysis"
-      subtitle = "From 1970 to 2017 "
-      image = "pic16.jpg" 
-      url = "blogs/blog3"
 
     [[params.tiles.showcase]]
       title = "Ipsum"
@@ -138,13 +139,34 @@ disqusShortname = ""
   # Section Type Two
   [params.two]
     enable = true
-    title = "Massa libero"
-    subtitle = """Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. 
-    Mauris aliquet magna magna sed nunc rhoncus pharetra. 
-    Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. 
-    Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero.
-    Mauris aliquet magna magna sed nunc rhoncus amet pharetra et feugiat tempus."""
-    buttonText = "Get Started"
+    title = "About Me"
+    subtitle = "" 
+    
+    I'm Brazilian, I graduated in 2019 as an Production Engineer at 
+    Universidade Federal Fluminense. Before my graduation I had the opportunity 
+    to live in Minnesota (USA) for a semester as a Exchange Student.
+
+  During graduation I was able to have a good performance at my course but also 
+  did different extra-curricular activities such as financial courses at other 
+  universities (FGV and Ibmec), I did other Exchange Student Programme to Madrid
+  (Spain) during a semester to study Economics and Finance and did a Summer Internship
+  and Full Time Internship at BTG Pactual, the largest investment bank of Latin America.
+
+  At BTG Pactual I had a great opportunity to learn from smart and intelligent
+  people and confirm my cultural fit for companies that value hands on, hard working
+  and a meritocratic environment.
+  These values plus a great amount of curiosity drove me through the years to achieve
+  top places in the evaluation process of my former employer, recognized in the courses
+  that I took (4th place in the financial markets course of BTG Pactual among 180+
+  Analysts of the company) and get top positions in international competitions such
+  as Strategic Challenge of Bain & Company where my team reached the Latin America 
+  Final of the case competition.
+
+  Currently I'm enrolled in the Master in Financial Analysis (MFA) at London Business
+  School seeking for more knowledge, contact and exchange of ideas with other bright
+  people from different countries and cultures, and a career transition to the Buy
+  Side. I would like to have the opportunity to work with great and open-minded people
+  where the best arguments and investment thesis always wins.  buttonText = "Get Started"
     url = "blogs"
 
 
