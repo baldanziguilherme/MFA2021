@@ -223,7 +223,7 @@ ggplot(monthly_returns, aes(x=sd, y=mean, colour=symbol)) +
 
 ```
 
-Some thoughts on the above plot:
+Some thoughts on the above plot: 
 
 >1. From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.
 
