@@ -10,3 +10,7 @@ keywords: ""
 slug: blog2
 title: My CV
 ---
+```{r}
+
+```
+
