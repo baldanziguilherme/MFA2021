@@ -104,10 +104,10 @@ disqusShortname = ""
       url = "blogs/blog1"
 
     [[params.tiles.showcase]]
-      title = "Magna"
-      subtitle = "Lorem Etiam Nullam"
-      image = "pic03.jpg"
-      url = "blogs/magna"
+      title = "BRICS GDP Analysis"
+      subtitle = "From 1970 to 2017 "
+      image = "pic16.jpg" 
+      url = "blogs/blog3"
 
     [[params.tiles.showcase]]
       title = "Ipsum"
