@@ -100,7 +100,7 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "Stocks Risk x Return Analysis"
       subtitle = "S&P500 vs Financials - 10 years Analysis"
-      image = "pic12.jpg"
+      image = "pic13.jpg"
       url = "blogs/blog1"
 
     [[params.tiles.showcase]]
