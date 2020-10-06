@@ -3,13 +3,15 @@ categories:
 - ""
 - ""
 date: "2017-10-31T22:26:13-05:00"
-description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis magna sed nunc rhoncus condimentum sem. In efficitur ligula tate urna. Maecenas massa sed magna lacinia magna pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis tempus.
+description:
 draft: false
-image: pic08.jpg
+image: pic17.jpg
 keywords: ""
 slug: blog3
 title: BRICS - Changes in GDP Components
 ---
+
+We want to analyse the changes in the GDP components of the BRICS over the 1970 - 2017 period
 
 
 ```{r, setup, echo=FALSE}
@@ -43,8 +45,6 @@ library(tidyquant)
 library(infer)
 library(openintro)
 ```
-
-
 
 
 At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
