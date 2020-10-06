@@ -8,13 +8,11 @@ draft: false
 image: pic08.jpg
 keywords: ""
 slug: blog3
-title: GDP components over time and among BRICS
+title: BRICS - Changes in GDP Components
 ---
 
 
 
-<div id="challenge-2gdp-components-over-time-and-among-countries" class="section level1">
-<h1>Challenge 2:GDP components over time and among countries</h1>
 <p>At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the <a href="https://en.wikipedia.org/wiki/Gross_domestic_product">Wikipedia GDP page</a>.</p>
 <p>The GDP data we will look at is from the <a href="https://unstats.un.org/unsd/snaama/Downloads">United Nations’ National Accounts Main Aggregates Database</a>, which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country’s GDP. The file we will work with is <a href="http://unstats.un.org/unsd/amaapi/api/file/6">GDP and its breakdown at constant 2010 prices in US Dollars</a> and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised</p>
 <p>Let’s get the data from our source:</p>
@@ -100,12 +98,8 @@ gdp1 &lt;- ggplot(data = BRICS_GDP, aes(x = Year, y = Sum, group = IndicatorName
   theme_bw()+ 
   theme(plot.title = element_text(face = &quot;bold&quot;))
 
-#save the graph
-ggsave(&quot;gdp1.jpg&quot;,plot=gdp1,width = 15,height = 10, path = here::here(&quot;images&quot;))
-
-#place the graph in code
-knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp1.jpg&quot;))</code></pre>
-<p><img src="C:/Users/gui_m/Documents/LBS/AUT%2020/CA09%20-%20Data%20Analytics%20for%20Finance/Final%20Project/my_website/images/gdp1.jpg" width="100%" style="display: block; margin: auto;" /></p>
+gdp1</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp1-1.png" width="100%" style="display: block; margin: auto;" /></p>
 <blockquote>
 <p>Some observations about the graph above:</p>
 </blockquote>
@@ -164,12 +158,8 @@ gdp_difference &lt;- ggplot(data = BRICS_GDP_3, aes(x = Year, y = GDP_difference
        subtitle = &quot;All BRICS suffer with variability over realeased and calculated GBP&quot;)+ 
       theme(plot.title = element_text(face = &quot;bold&quot;))
 
-#save the graph
-ggsave(&quot;gdp3.jpg&quot;,plot=gdp_difference,width = 15,height = 10, path = here::here(&quot;images&quot;))
-
-#place the graph in code
-knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp3.jpg&quot;))</code></pre>
-<p><img src="C:/Users/gui_m/Documents/LBS/AUT%2020/CA09%20-%20Data%20Analytics%20for%20Finance/Final%20Project/my_website/images/gdp3.jpg" width="100%" style="display: block; margin: auto;" /></p>
+gdp_difference</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp_difference-1.png" width="100%" style="display: block; margin: auto;" /></p>
 <blockquote>
 <p>In the above graph is possible to observe a lot of mismatch between the GDP figures released by governments and the GDP calculated by ourselves.
 It shows why investors are more careful before invest in Developing Economies. But the good news is the the differences are converging towards zero with the years.</p>
@@ -204,12 +194,8 @@ gdp2 &lt;- ggplot(data = BRICS_GDP_5, aes(x = Year, y = Proportion, group = Comp
   coord_equal(ratio = 80) + 
   theme(plot.title = element_text(face = &quot;bold&quot;))
 
-#save the graph
-ggsave(&quot;gdp2.jpg&quot;,plot=gdp2,width = 15,height = 10, path = here::here(&quot;images&quot;))
-
-#place the graph in code
-knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp2.jpg&quot;))</code></pre>
-<p><img src="C:/Users/gui_m/Documents/LBS/AUT%2020/CA09%20-%20Data%20Analytics%20for%20Finance/Final%20Project/my_website/images/gdp2.jpg" width="100%" style="display: block; margin: auto;" /></p>
+gdp2</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp2-1.png" width="100%" style="display: block; margin: auto;" /></p>
 <blockquote>
 <p>The graph above is super interesting because it give us so many information about the Economy and Politics about each country:</p>
 </blockquote>
@@ -238,4 +224,3 @@ knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp2.jpg&quot;))</c
 <li>South Africa: The country saw the ascension of household expenditure from 45% (1970) to ~60% (2015). The gross capital formation seems to be stabilized around 20% and the government expenditures have a negative correlation to the net exports.</li>
 </ol>
 </blockquote>
-</div>
