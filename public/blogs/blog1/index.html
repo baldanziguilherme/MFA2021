@@ -8,7 +8,7 @@
 	<meta name="description" content="My personal website">
 	<meta name="author" content="Guilherme Baldanzi">
 	<meta name="generator" content="Hugo 0.75.1" />
-	<title>Ipsum &middot; Guilherme Baldanzi</title>
+	<title>Returns of financial stocks &middot; Guilherme Baldanzi</title>
 	<!-- Stylesheets -->
 	
 	<link rel="stylesheet" href="/css/main.css"/>
@@ -73,10 +73,10 @@
                     <section id="one">
                         <div class="inner">
                             <header class="major">
-                                <h1>Ipsum</h1>
+                                <h1>Returns of financial stocks</h1>
                             </header>
                             
-                                <span class="image main"><img src="/img/blogs/pic10.jpg" alt="" /></span>
+                                <span class="image main"><img src="/img/blogs/pic12.jpg" alt="" /></span>
                             
                             
 
@@ -109,11 +109,6 @@ library(purrr)
 library(lubridate) #to handle dates
 library(ggrepel)
 library(ggplot2)</code></pre>
-<div id="returns-of-financial-stocks" class="section level1">
-<h1>Returns of financial stocks</h1>
-<blockquote>
-<p>You may find useful the material on <a href="https://mfa2021.netlify.app/reference/finance_data/">finance data sources</a>.</p>
-</blockquote>
 <p>We will use the <code>tidyquant</code> package to download historical data of stock prices, calculate returns, and examine the distribution of returns.</p>
 <p>We must first identify which stocks we want to download data for, and for this we must know their ticker symbol; Apple is known as AAPL, Microsoft as MSFT, McDonald’s as MCD, etc. The file <code>nyse.csv</code> contains 508 stocks listed on the NYSE, their ticker <code>symbol</code>, <code>name</code>, the IPO (Initial Public Offering) year, and the sector and industry the company is in.</p>
 <pre class="r"><code>nyse &lt;- read_csv(here::here(&quot;data&quot;,&quot;nyse.csv&quot;))
@@ -350,9 +345,8 @@ monthly_returns &lt;- myStocks_returns_monthly %&gt;%
 <p><img src="/blogs/blog1_files/figure-html/density_monthly_returns-1.png" width="648" style="display: block; margin: auto;" /></p>
 <p>What can you infer from this plot? Which stock is the riskiest? The least risky?</p>
 <blockquote>
-<p>TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.</p>
-</blockquote>
 <p>This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.</p>
+</blockquote>
 <p>Finally, produce a plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis. Please use <code>ggrepel::geom_text_repel()</code> to label each stock with its ticker symbol</p>
 <pre class="r"><code>ggplot(monthly_returns, aes(x=sd, y=mean, colour=symbol)) +
   geom_point() +
@@ -365,17 +359,35 @@ monthly_returns &lt;- myStocks_returns_monthly %&gt;%
 <p><img src="/blogs/blog1_files/figure-html/risk_return_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
 <p>What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?</p>
 <blockquote>
-<p>TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.</p>
-</blockquote>
 <ol style="list-style-type: decimal">
 <li>From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2" style="list-style-type: decimal">
 <li>Comparing to the SPY just JPM (JP Morgan), BLR (Black Rock) and TROW (T. Row Price) performed better than the SPY. This stocks presents higher standard deviation and also higher return. This means that the additional risk brought higher returns.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3" style="list-style-type: decimal">
 <li>When comparing C (Citi), GS (Goldman Sachs), TROW (T. Row Price), BAC (Bank of America) and MS (Morgan Stanley) to SPY, none of this investments where good decisions since they have higher risk but equal or less return.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4" style="list-style-type: decimal">
 <li>Grouping the big banks: BAC (Bank of America), C (Citi) and JPM (JP Morgan), JPM was the best investment since it showed the higher return and smallest standard deviation.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5" style="list-style-type: decimal">
 <li>Grouping the investment banks: GS (Goldman Sachs) and MS (Morgan Stanley), MS had the best risk x return ratio.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="6" style="list-style-type: decimal">
 <li>Grouping the Asset Management firms: BLR (BlackRock) and TROW (T.Row Price), BLR had the best risk x return.</li>
 </ol>
-</div>
+</blockquote>
 
                         </div>
                     </section>

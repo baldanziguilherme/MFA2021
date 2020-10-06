@@ -92,16 +92,16 @@ disqusShortname = ""
     # Display your showcases here.
     
     [[params.tiles.showcase]]
-      title = "About Me"
-      subtitle = "Click to Know More About Me"
-      image = "pic01.jpg"
-      url = "blogs/blog1"
+      title = "My CV"
+      subtitle = "Click to See my CV"
+      image = "pic11.jpg"
+      url = "blogs/blog2"
 
     [[params.tiles.showcase]]
       title = "Stocks Risk x Return Analysis"
       subtitle = "S&P500 vs Financials - 10 years Analysis"
-      image = "pic02.jpg"
-      url = "blogs/tempus"
+      image = "pic12.jpg"
+      url = "blogs/blog1"
 
     [[params.tiles.showcase]]
       title = "Magna"

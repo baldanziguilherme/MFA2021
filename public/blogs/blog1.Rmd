@@ -5,10 +5,10 @@ categories:
 date: "2017-10-31T21:28:43-05:00"
 description: ""
 draft: false
-image: pic10.jpg
+image: pic12.jpg
 keywords: ""
 slug: blog1
-title: Ipsum
+title: Returns of financial stocks
 ---
 
 
@@ -48,10 +48,6 @@ library(ggplot2)
 ```
 
 
-# Returns of financial stocks
-
-
-> You may find useful the material on [finance data sources](https://mfa2021.netlify.app/reference/finance_data/). 
 
 We will use the `tidyquant` package to download historical data of stock prices, calculate returns, and examine the distribution of returns. 
 
@@ -208,9 +204,7 @@ ggplot(myStocks_returns_monthly, aes(x=monthly_returns)) +
 
 What can you infer from this plot? Which stock is the riskiest? The least risky? 
 
-> TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.
-
-This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.
+>This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.
 
 
 Finally, produce a plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis. Please use `ggrepel::geom_text_repel()` to label each stock with its ticker symbol
@@ -230,13 +224,16 @@ ggplot(monthly_returns, aes(x=sd, y=mean, colour=symbol)) +
 
 What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?
 
-> TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.
+>1. From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.
 
-1. From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.
-2. Comparing to the SPY just JPM (JP Morgan), BLR (Black Rock) and TROW (T. Row Price) performed better than the SPY. This stocks presents higher standard deviation and also higher return. This means that the additional risk brought higher returns.
-3. When comparing C (Citi), GS (Goldman Sachs), TROW (T. Row Price), BAC (Bank of America) and MS (Morgan Stanley) to SPY, none of this investments where good decisions since they have higher risk but equal or less return.
-4. Grouping the big banks: BAC (Bank of America), C (Citi) and JPM (JP Morgan), JPM was the best investment since it showed the higher return and smallest standard deviation.
-5. Grouping the investment banks: GS (Goldman Sachs) and MS (Morgan Stanley), MS had the best risk x return ratio.
-6. Grouping the Asset Management firms: BLR (BlackRock) and TROW (T.Row Price), BLR had the best risk x return.
+>2. Comparing to the SPY just JPM (JP Morgan), BLR (Black Rock) and TROW (T. Row Price) performed better than the SPY. This stocks presents higher standard deviation and also higher return. This means that the additional risk brought higher returns.
+
+>3. When comparing C (Citi), GS (Goldman Sachs), TROW (T. Row Price), BAC (Bank of America) and MS (Morgan Stanley) to SPY, none of this investments where good decisions since they have higher risk but equal or less return.
+
+>4. Grouping the big banks: BAC (Bank of America), C (Citi) and JPM (JP Morgan), JPM was the best investment since it showed the higher return and smallest standard deviation.
+
+>5. Grouping the investment banks: GS (Goldman Sachs) and MS (Morgan Stanley), MS had the best risk x return ratio.
+
+>6. Grouping the Asset Management firms: BLR (BlackRock) and TROW (T.Row Price), BLR had the best risk x return.
 
 
