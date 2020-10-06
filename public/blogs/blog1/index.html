@@ -1,0 +1,431 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="My personal website">
+	<meta name="author" content="Guilherme Baldanzi">
+	<meta name="generator" content="Hugo 0.75.1" />
+	<title>Ipsum &middot; Guilherme Baldanzi</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>London Business School</strong> <span>MFA 2021</span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">About Me</a></li>
+            
+                <li><a href="/blogs">My previous work</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="/blogs" class="button special fit">Get Started</a></li>
+            
+            
+                <li><a href="/" class="button fit">Log In</a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>Ipsum</h1>
+                            </header>
+                            
+                                <span class="image main"><img src="/img/blogs/pic10.jpg" alt="" /></span>
+                            
+                            
+
+
+<pre class="r"><code>knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size=&quot;small&quot;)   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = &quot;center&quot;
+)</code></pre>
+<pre class="r"><code>library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)    # scrape websites
+library(purrr)  
+library(lubridate) #to handle dates
+library(ggrepel)
+library(ggplot2)</code></pre>
+<div id="returns-of-financial-stocks" class="section level1">
+<h1>Returns of financial stocks</h1>
+<blockquote>
+<p>You may find useful the material on <a href="https://mfa2021.netlify.app/reference/finance_data/">finance data sources</a>.</p>
+</blockquote>
+<p>We will use the <code>tidyquant</code> package to download historical data of stock prices, calculate returns, and examine the distribution of returns.</p>
+<p>We must first identify which stocks we want to download data for, and for this we must know their ticker symbol; Apple is known as AAPL, Microsoft as MSFT, McDonald’s as MCD, etc. The file <code>nyse.csv</code> contains 508 stocks listed on the NYSE, their ticker <code>symbol</code>, <code>name</code>, the IPO (Initial Public Offering) year, and the sector and industry the company is in.</p>
+<pre class="r"><code>nyse &lt;- read_csv(here::here(&quot;data&quot;,&quot;nyse.csv&quot;))
+
+skimr::skim(nyse)</code></pre>
+<table>
+<caption>(#tab:load_nyse_data)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">nyse</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">508</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">6</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">6</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">symbol</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">508</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">48</td>
+<td align="right">0</td>
+<td align="right">505</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">ipo_year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">sector</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">industry</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">62</td>
+<td align="right">0</td>
+<td align="right">103</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">summary_quote</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">31</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">508</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>Based on this dataset, create a table and a bar plot that shows the number of companies per sector, in descending order</p>
+<pre class="r"><code>library(dplyr)
+  sectors &lt;- nyse %&gt;% 
+  group_by(sector) %&gt;% 
+  dplyr::count(sort=TRUE) 
+
+ggplot(sectors, aes(x=n, y = reorder(sector, n))) + 
+  geom_col() +
+  labs(title = &quot;NYSE Ranking - Largest Sectors&quot;, x=&quot;Number of companies&quot;, y=&quot;Sector&quot;) + 
+  NULL</code></pre>
+<p><img src="/blogs/blog1_files/figure-html/companies_per_sector-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Next, let’s choose the <a href="https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average">Dow Jones Industrial Aveareg (DJIA)</a> stocks and their ticker symbols and download some data. Besides the thirty stocks that make up the DJIA, we will also add <code>SPY</code> which is an SP500 ETF (Exchange Traded Fund).</p>
+<pre class="r"><code>djia_url &lt;- &quot;https://en.wikipedia.org/wiki/Dow_Jones_Industrial_Average&quot;
+
+#get tables that exist on URL
+tables &lt;- djia_url %&gt;% 
+  read_html() %&gt;% 
+  html_nodes(css=&quot;table&quot;)
+
+
+# parse HTML tables into a dataframe called djia. 
+# Use purr::map() to create a list of all tables in URL
+djia &lt;- map(tables, . %&gt;% 
+               html_table(fill=TRUE)%&gt;% 
+               clean_names())
+
+
+# constituents
+table1 &lt;- djia[[2]] %&gt;% # the second table on the page contains the ticker symbols
+  mutate(date_added = ymd(date_added),
+         
+         # if a stock is listed on NYSE, its symbol is, e.g., NYSE: MMM
+         # We will get prices from yahoo finance which requires just the ticker
+         
+         # if symbol contains &quot;NYSE*&quot;, the * being a wildcard
+         # then we jsut drop the first 6 characters in that string
+         ticker = ifelse(str_detect(symbol, &quot;NYSE*&quot;),
+                          str_sub(symbol,7,11),
+                          symbol)
+         )
+
+# we need a vector of strings with just the 30 tickers + SPY
+tickers &lt;- table1 %&gt;% 
+  select(ticker) %&gt;% 
+  pull() %&gt;% # pull() gets them as a sting of characters
+  c(&quot;SPY&quot;) # and lets us add SPY, the SP500 ETF</code></pre>
+<pre class="r"><code># Notice the cache=TRUE argument in the chunk options. Because getting data is time consuming, # cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
+
+#Selecting stocks to analyse
+library(tidyquant)
+myStocks &lt;- c(&quot;BAC&quot;, &quot;BLK&quot;,&quot;C&quot;,&quot;GS&quot;,&quot;JPM&quot;,&quot;MS&quot;,&quot;TROW&quot;,&quot;SPY&quot; ) %&gt;%
+  tq_get(get  = &quot;stock.prices&quot;,
+         from = &quot;2010-09-01&quot;,
+         to   = &quot;2020-08-31&quot;) %&gt;%
+  group_by(symbol) 
+
+#Taking a glimpse at our resulting dataframe
+glimpse(myStocks)</code></pre>
+<pre><code>## Rows: 20,128
+## Columns: 8
+## Groups: symbol [8]
+## $ symbol   &lt;chr&gt; &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;BAC&quot;, &quot;B...
+## $ date     &lt;date&gt; 2010-09-01, 2010-09-02, 2010-09-03, 2010-09-07, 2010-09-0...
+## $ open     &lt;dbl&gt; 12.6, 13.2, 13.5, 13.4, 13.3, 13.6, 13.6, 13.9, 14.0, 13.6...
+## $ high     &lt;dbl&gt; 13.2, 13.4, 13.7, 13.4, 13.5, 13.9, 13.7, 14.1, 14.0, 13.8...
+## $ low      &lt;dbl&gt; 12.6, 13.2, 13.3, 13.2, 13.2, 13.5, 13.5, 13.9, 13.6, 13.5...
+## $ close    &lt;dbl&gt; 13.2, 13.3, 13.5, 13.2, 13.4, 13.5, 13.6, 13.9, 13.7, 13.7...
+## $ volume   &lt;dbl&gt; 2.05e+08, 1.55e+08, 1.42e+08, 1.27e+08, 1.03e+08, 1.69e+08...
+## $ adjusted &lt;dbl&gt; 11.7, 11.7, 11.9, 11.7, 11.8, 11.9, 12.0, 12.3, 12.1, 12.1...</code></pre>
+<p>Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.</p>
+<pre class="r"><code>#calculate daily returns
+myStocks_returns_daily &lt;- myStocks %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;daily&quot;, 
+               type       = &quot;log&quot;,
+               col_rename = &quot;daily_returns&quot;,
+               cols = c(nested.col))  
+
+#calculate monthly  returns
+myStocks_returns_monthly &lt;- myStocks %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;monthly&quot;, 
+               type       = &quot;arithmetic&quot;,
+               col_rename = &quot;monthly_returns&quot;,
+               cols = c(nested.col)) 
+
+#calculate yearly returns
+myStocks_returns_annual &lt;- myStocks %&gt;%
+  group_by(symbol) %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;yearly&quot;, 
+               type       = &quot;arithmetic&quot;,
+               col_rename = &quot;yearly_returns&quot;,
+               cols = c(nested.col))</code></pre>
+<p>Create a dataframe and assign it to a new object, where you summarise monthly returns since 2017-01-01 for each of the stocks and <code>SPY</code>; min, max, median, mean, SD.</p>
+<pre class="r"><code>#Summarizing and calculating variables
+monthly_returns &lt;- myStocks_returns_monthly %&gt;% 
+  dplyr::group_by(symbol) %&gt;% 
+  dplyr::summarise(min = min(monthly_returns),
+            max = max(monthly_returns), 
+            median=median(monthly_returns), 
+            mean=mean(monthly_returns), 
+            sd = sd(monthly_returns)) %&gt;% 
+  ungroup()</code></pre>
+<p>Plot a density plot, using <code>geom_density()</code>, for each of the stocks</p>
+<pre class="r"><code>ggplot(myStocks_returns_monthly, aes(x=monthly_returns)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ symbol) +
+  labs(title = &quot;Distribution of Monthly Returns per Stock&quot;, x=&quot;Monthly return&quot;, y=&quot;Density&quot;) +
+  theme_bw()+
+  NULL</code></pre>
+<p><img src="/blogs/blog1_files/figure-html/density_monthly_returns-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>What can you infer from this plot? Which stock is the riskiest? The least risky?</p>
+<blockquote>
+<p>TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.</p>
+</blockquote>
+<p>This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.</p>
+<p>Finally, produce a plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis. Please use <code>ggrepel::geom_text_repel()</code> to label each stock with its ticker symbol</p>
+<pre class="r"><code>ggplot(monthly_returns, aes(x=sd, y=mean, colour=symbol)) +
+  geom_point() +
+  geom_text_repel(aes(label = symbol)) +
+  labs(title = &quot;Average Monthly Risk x Return by Stock&quot;, 
+       x=&quot;Average Monthly Standard Deviation&quot;, 
+       y=&quot;Average Monthly Return&quot;) +
+  theme_bw()+
+  NULL</code></pre>
+<p><img src="/blogs/blog1_files/figure-html/risk_return_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?</p>
+<blockquote>
+<p>TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.</p>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.</li>
+<li>Comparing to the SPY just JPM (JP Morgan), BLR (Black Rock) and TROW (T. Row Price) performed better than the SPY. This stocks presents higher standard deviation and also higher return. This means that the additional risk brought higher returns.</li>
+<li>When comparing C (Citi), GS (Goldman Sachs), TROW (T. Row Price), BAC (Bank of America) and MS (Morgan Stanley) to SPY, none of this investments where good decisions since they have higher risk but equal or less return.</li>
+<li>Grouping the big banks: BAC (Bank of America), C (Citi) and JPM (JP Morgan), JPM was the best investment since it showed the higher return and smallest standard deviation.</li>
+<li>Grouping the investment banks: GS (Goldman Sachs) and MS (Morgan Stanley), MS had the best risk x return ratio.</li>
+<li>Grouping the Asset Management firms: BLR (BlackRock) and TROW (T.Row Price), BLR had the best risk x return.</li>
+</ol>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://pt-br.facebook.com/guilherme.loureiro.7" class="icon alt fa-facebook" target="_blank"><span class="label">Facebook</span></a></li>
+                
+                    <li><a href="https://www.instagram.com/baldanziguilherme/?hl=pt" class="icon alt fa-instagram" target="_blank"><span class="label">Instagram</span></a></li>
+                
+                    <li><a href="https://github.com/baldanziguilherme/" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/in/guilherme-baldanzi/" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Guilherme Baldanzi</li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

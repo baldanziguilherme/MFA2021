@@ -95,7 +95,7 @@ disqusShortname = ""
       title = "About Me"
       subtitle = "Click to Know More About Me"
       image = "pic01.jpg"
-      url = "blogs/blog5"
+      url = "blogs/blog1"
 
     [[params.tiles.showcase]]
       title = "Stocks Risk x Return Analysis"
