@@ -11,6 +11,8 @@ slug: blog1
 title: Returns of financial stocks 
 ---
 
+We want to see from which sectors are the S&P500 companies from.
+After that, we select some stocks of the financial sector and make a risk x return comparison with the S&P500 index in a 10 years window (2010 - 2019)
 
 ```{r, setup}
 knitr::opts_chunk$set(
@@ -52,7 +54,6 @@ library(ggplot2)
 We will use the `tidyquant` package to download historical data of stock prices, calculate returns, and examine the distribution of returns. 
 
 We must first identify which stocks we want to download data for, and for this we must know their ticker symbol; Apple is known as AAPL, Microsoft as MSFT, McDonald's as MCD, etc. The file `nyse.csv` contains 508 stocks listed on the NYSE, their ticker `symbol`, `name`, the IPO  (Initial Public Offering) year, and the sector and industry the company is in.
-
 
 
 ```{r load_nyse_data, message=FALSE, warning=FALSE}
@@ -191,6 +192,7 @@ monthly_returns <- myStocks_returns_monthly %>%
 
 
 Plot a density plot, using `geom_density()`, for each of the stocks
+
 ```{r density_monthly_returns}
 
 ggplot(myStocks_returns_monthly, aes(x=monthly_returns)) +
@@ -202,7 +204,6 @@ ggplot(myStocks_returns_monthly, aes(x=monthly_returns)) +
 
 ```
 
-What can you infer from this plot? Which stock is the riskiest? The least risky? 
 
 >This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.
 
@@ -222,7 +223,7 @@ ggplot(monthly_returns, aes(x=sd, y=mean, colour=symbol)) +
 
 ```
 
-What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?
+Some thoughts on the above plot:
 
 >1. From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.
 

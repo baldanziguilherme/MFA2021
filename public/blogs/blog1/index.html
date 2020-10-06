@@ -81,6 +81,8 @@
                             
 
 
+<p>We want to see from which sectors are the S&amp;P500 companies from.
+After that, we select some stocks of the financial sector and make a risk x return comparison with the S&amp;P500 index in a 10 years window (2010 - 2019)</p>
 <pre class="r"><code>knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE, 
@@ -343,7 +345,6 @@ monthly_returns &lt;- myStocks_returns_monthly %&gt;%
   theme_bw()+
   NULL</code></pre>
 <p><img src="/blogs/blog1_files/figure-html/density_monthly_returns-1.png" width="648" style="display: block; margin: auto;" /></p>
-<p>What can you infer from this plot? Which stock is the riskiest? The least risky?</p>
 <blockquote>
 <p>This graph show that the least riskier investment is the SPY (sd = 0.0382) since it has the smallest standard deviation comparing to the other stocks. BAC (sd = 0.0948) and MS (sd = 0.0920) are the riskier stocks because the present the highest standard deviation.</p>
 </blockquote>
@@ -357,7 +358,7 @@ monthly_returns &lt;- myStocks_returns_monthly %&gt;%
   theme_bw()+
   NULL</code></pre>
 <p><img src="/blogs/blog1_files/figure-html/risk_return_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
-<p>What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?</p>
+<p>Some thoughts on the above plot:</p>
 <blockquote>
 <ol style="list-style-type: decimal">
 <li>From a portfolio construction point of view the financial sector is riskier (higher standard deviation) than the SPY and this additional risk is not justified by higher returns, in most of the cases.</li>

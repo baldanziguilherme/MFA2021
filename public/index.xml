@@ -42,7 +42,8 @@ The GDP data we will look at is from the United Nations’ National Accounts Mai
       <pubDate>Tue, 31 Oct 2017 21:28:43 -0500</pubDate>
       
       <guid>/blogs/blog1/</guid>
-      <description>knitr::opts_chunk$set(message = FALSE, warning = FALSE, tidy=FALSE, # display code as typedsize=&amp;quot;small&amp;quot;) # slightly smaller font for codeoptions(digits = 3)# default figure sizeknitr::opts_chunk$set(fig.width=6.75, fig.height=6.75,fig.align = &amp;quot;center&amp;quot;)library(tidyverse) # Load ggplot2, dplyr, and all the other tidyverse packageslibrary(mosaic)library(ggthemes)library(lubridate)library(fivethirtyeight)library(here)library(skimr)library(janitor)library(vroom)library(tidyquant)library(rvest) # scrape websiteslibrary(purrr) library(lubridate) #to handle dateslibrary(ggrepel)library(ggplot2)We will use the tidyquant package to download historical data of stock prices, calculate returns, and examine the distribution of returns.</description>
+      <description>We want to see from which sectors are the S&amp;amp;P500 companies from.After that, we select some stocks of the financial sector and make a risk x return comparison with the S&amp;amp;P500 index in a 10 years window (2010 - 2019)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, tidy=FALSE, # display code as typedsize=&amp;quot;small&amp;quot;) # slightly smaller font for codeoptions(digits = 3)# default figure sizeknitr::opts_chunk$set(fig.</description>
     </item>
     
     <item>
