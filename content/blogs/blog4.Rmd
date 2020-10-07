@@ -2,16 +2,15 @@
 categories:
 - ""
 - ""
-date: "2017-10-31T22:42:51-05:00"
-description: 
+date: "2017-10-31T22:26:13-05:00"
+description:
 draft: false
-image: pic07.jpg
+image: pic17.jpg
 keywords: ""
-slug: blog4
-title: COVID-19 : The impact of commorbidities and ICU threatment on the Death rates 
+slug: blog3
+title: BRICS - Changes in GDP Components
 ---
 
-# Trump's Approval Margins
 
 ```{r, setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -45,9 +44,11 @@ library(infer)
 ```
 
 
+# Trump's Approval Margins
+
 As we saw in class, fivethirtyeight.com has detailed data on [all polls that track the president's approval ](https://projects.fivethirtyeight.com/trump-approval-ratings)
 
-```{r1}
+```{r, cache=TRUE}
 # Import approval polls data
 
 
@@ -120,3 +121,4 @@ plot2 <- ggplot(approval_polllist0,aes(x=Week_Number,y=avg_net))+
 plot2
 
 ```
+
