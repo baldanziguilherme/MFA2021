@@ -123,9 +123,9 @@ disqusShortname = ""
       url = "blogs/blog5"
 
     [[params.tiles.showcase]]
-    title = "Etiam"
-    subtitle = "Feugiat Amet Tempus"
-    image = "pic06.jpg"
+    title = "TfL Bikes"
+    subtitle = "How to manage it?"
+    image = "pic24.jpg"
     url = "blogs/blog6"
    # You can make more showcases by copy and pasting the code above
 
