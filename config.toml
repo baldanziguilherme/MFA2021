@@ -116,11 +116,11 @@ disqusShortname = ""
       image = "pic20.jpg"
       url = "blogs/blog4"
 
-#    [[params.tiles.showcase]]
-#     title = "Consequat"
-#      subtitle = "Ipsum Dolor Sit Amet"
-#    image = "pic05.jpg"
-#    url = "blogs/ipsum"
+    [[params.tiles.showcase]]
+      title = "Consequat"
+      subtitle = "Ipsum Dolor Sit Amet"
+      image = "pic05.jpg"
+      url = "blogs/blog5"
 
 #    [[params.tiles.showcase]]
 #    title = "Etiam"
