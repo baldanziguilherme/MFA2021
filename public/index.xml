@@ -19,13 +19,14 @@ The GDP data we will look at is from the United Nations’ National Accounts Mai
     </item>
     
     <item>
-      <title>BRICS - Changes in GDP Components</title>
+      <title>How Trump&#39;s net approval rate oscilated on his mandate?</title>
       <link>/blogs/blog4/</link>
       <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
       
       <guid>/blogs/blog4/</guid>
-      <description>Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed data on all polls that track the president’s approval
-# Import approval polls data# or directly off fivethirtyeight websiteapproval_polllist &amp;lt;- read_csv(&amp;#39;https://projects.fivethirtyeight.com/trump-approval-data/approval_polllist.csv&amp;#39;) glimpse(approval_polllist)## Rows: 15,730## Columns: 22## $ president &amp;lt;chr&amp;gt; &amp;quot;Donald Trump&amp;quot;, &amp;quot;Donald Trump&amp;quot;, &amp;quot;Donald Trump&amp;quot;,...## $ subgroup &amp;lt;chr&amp;gt; &amp;quot;All polls&amp;quot;, &amp;quot;All polls&amp;quot;, &amp;quot;All polls&amp;quot;, &amp;quot;All pol...## $ modeldate &amp;lt;chr&amp;gt; &amp;quot;10/6/2020&amp;quot;, &amp;quot;10/6/2020&amp;quot;, &amp;quot;10/6/2020&amp;quot;, &amp;quot;10/6/20.</description>
+      <description>The goal is to observe how the net approval (Approval - Disapproval) of presidentDonald Trump. We analyze the data from the first week of Trump’s mandate to the week39 of his 4th year as the president of the United States
+Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed data on all polls that track the president’s approval
+# Import approval polls data# or directly off fivethirtyeight websiteapproval_polllist &amp;lt;- read_csv(&amp;#39;https://projects.</description>
     </item>
     
     <item>

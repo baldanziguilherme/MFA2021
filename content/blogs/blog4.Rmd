@@ -5,12 +5,15 @@ categories:
 date: "2017-10-31T22:26:13-05:00"
 description:
 draft: false
-image: pic17.jpg
+image: pic18.png
 keywords: ""
 slug: blog4
-title: BRICS - Changes in GDP Components
+title: How Trump's net approval rate oscilated on his mandate?
 ---
 
+The goal is to observe how the net approval (Approval - Disapproval) of president
+Donald Trump. We analyze the data from the first week of Trump's mandate to the week
+39 of his 4th year as the president of the United States
 
 ```{r, setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -122,3 +125,5 @@ plot2
 
 ```
 
+
+> The graphs shows that the net approval was negative most of the times during the last 4 years of Trump's office. The dispersion of the mean also changed depending of the number of polls and standard deviation of the results. Overall, Trump don't have a great approval by the American People.
