@@ -5,7 +5,7 @@ categories:
 date: "2017-10-31T22:26:09-05:00"
 description: 
 draft: false
-image: pic21.jpg
+image: pic14.jpg
 keywords: ""
 slug: blog2
 title: Hello! Bellow you can find my CV 
