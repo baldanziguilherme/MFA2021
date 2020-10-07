@@ -198,7 +198,7 @@ ggplot(m_avg_bike2,aes(x=month,y=month_avg,group=1))+
   
   #color the monthly excess rentals each year
   geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month&lt;0,month_avg,month_avg_exp)),
-              fill=alpha(&quot;#CB454A&quot;,alpha=0.5))+
+              fill=alpha(&quot;#CB454A&quot;,alpha=0.5))+ 
   geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month&gt;0,month_avg,month_avg_exp)),
               fill=alpha(&quot;#7DCD85&quot;,alpha=0.5))+
   facet_wrap(~year)+
