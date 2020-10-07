@@ -81,122 +81,218 @@
                             
 
 
-<div id="trumps-approval-margins" class="section level1">
-<h1>Trump’s Approval Margins</h1>
-<p>As we saw in class, fivethirtyeight.com has detailed data on <a href="https://projects.fivethirtyeight.com/trump-approval-ratings">all polls that track the president’s approval</a></p>
-<pre class="r"><code># Import approval polls data
+<p>We want to analyse the changes in the GDP components of the BRICS over the 1970 - 2017 period</p>
+<p>At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the <a href="https://en.wikipedia.org/wiki/Gross_domestic_product">Wikipedia GDP page</a>.</p>
+<p>The GDP data we will look at is from the <a href="https://unstats.un.org/unsd/snaama/Downloads">United Nations’ National Accounts Main Aggregates Database</a>, which contains estimates of total GDP and its components for all countries from 1970 to today. We will look at how GDP and its components have changed over time, and compare different countries and how much each component contributes to that country’s GDP. The file we will work with is <a href="http://unstats.un.org/unsd/amaapi/api/file/6">GDP and its breakdown at constant 2010 prices in US Dollars</a> and it has already been saved in the Data directory. Have a look at the Excel file to see how it is structured and organised</p>
+<p>Let’s get the data from our source:</p>
+<pre class="r"><code>UN_GDP_data  &lt;-  read_excel(here::here(&quot;data&quot;, &quot;Download-GDPconstant-USD-countries.xls&quot;),
+                sheet=&quot;Download-GDPconstant-USD-countr&quot;,
+                skip=2)</code></pre>
+<p>The first thing we need to do is to tidy the data, as it is in wide format and you must make it into long, tidy format. We will express all figures in billions, and we want to rename the indicators into something shorter.</p>
+<pre class="r"><code>#Creating the vector with the GDP components
+components &lt;- c(&quot;Gross capital formation&quot;, &quot;Exports of goods and services&quot;,     
+&quot;General government final consumption expenditure&quot;, &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;, &quot;Imports of goods and services&quot;,&quot;Gross Domestic Product (GDP)&quot;)
+
+#Changing the dataframe from a wide to a long format
+tidy_GDP_data  &lt;-  UN_GDP_data %&gt;% 
+  pivot_longer(cols = (4:51), names_to = &quot;Year&quot;, values_to = &quot;Sum&quot;) %&gt;% 
+  mutate(&quot;Sum&quot; = Sum/1e9) %&gt;% 
+  mutate(Year = as.numeric(Year))
+
+data_renamed&lt;- tidy_GDP_data%&gt;%
+ filter(IndicatorName %in% components) %&gt;%   
+pivot_wider(names_from = IndicatorName,values_from = Sum)
+  
+#renaming columns to a shorter name
+names(data_renamed)[4:9] &lt;- c(&quot;HCE&quot;,&quot;GOV&quot;,&quot;GCF&quot;,&quot;EGS&quot;,&quot;IGS&quot;,&quot;GDP&quot;) 
 
 
-# or directly off fivethirtyeight website
-approval_polllist &lt;- read_csv(&#39;https://projects.fivethirtyeight.com/trump-approval-data/approval_polllist.csv&#39;) 
+glimpse(data_renamed)</code></pre>
+<pre><code>## Rows: 10,560
+## Columns: 9
+## $ CountryID &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, ...
+## $ Country   &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan...
+## $ Year      &lt;dbl&gt; 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 197...
+## $ HCE       &lt;dbl&gt; 5.07, 4.84, 4.70, 5.21, 5.59, 5.65, 5.68, 6.15, 6.30, 6.1...
+## $ GOV       &lt;dbl&gt; 0.372, 0.382, 0.402, 0.421, 0.431, 0.598, 0.627, 0.676, 0...
+## $ GCF       &lt;dbl&gt; 0.985, 1.050, 0.919, 0.919, 1.181, 1.365, 2.035, 1.917, 2...
+## $ EGS       &lt;dbl&gt; 0.112, 0.145, 0.173, 0.218, 0.300, 0.316, 0.417, 0.431, 0...
+## $ IGS       &lt;dbl&gt; 0.184, 0.269, 0.260, 0.278, 0.407, 0.459, 0.564, 0.679, 0...
+## $ GDP       &lt;dbl&gt; 10.72, 10.69, 8.94, 9.20, 9.70, 10.30, 10.86, 10.32, 11.0...</code></pre>
+<p>Now, for our analysis, we are going to choose a specific group of countries that have similarities: The BRICS.</p>
+<p>B. Brazil
+R. Russia
+I. India
+C. China
+S. South Africa</p>
+<pre class="r"><code># Choosing the countries: Emerging countries - The BRICS
 
-glimpse(approval_polllist)</code></pre>
-<pre><code>## Rows: 15,730
-## Columns: 22
-## $ president           &lt;chr&gt; &quot;Donald Trump&quot;, &quot;Donald Trump&quot;, &quot;Donald Trump&quot;,...
-## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All pol...
-## $ modeldate           &lt;chr&gt; &quot;10/6/2020&quot;, &quot;10/6/2020&quot;, &quot;10/6/2020&quot;, &quot;10/6/20...
-## $ startdate           &lt;chr&gt; &quot;1/20/2017&quot;, &quot;1/20/2017&quot;, &quot;1/20/2017&quot;, &quot;1/21/20...
-## $ enddate             &lt;chr&gt; &quot;1/22/2017&quot;, &quot;1/22/2017&quot;, &quot;1/24/2017&quot;, &quot;1/23/20...
-## $ pollster            &lt;chr&gt; &quot;Gallup&quot;, &quot;Morning Consult&quot;, &quot;Ipsos&quot;, &quot;Gallup&quot;,...
-## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;B/C&quot;, &quot;B-&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B+&quot;, &quot;C+&quot;, &quot;B-&quot;, &quot;...
-## $ samplesize          &lt;dbl&gt; 1500, 1992, 1632, 1500, 1500, 1190, 1500, 1651,...
-## $ population          &lt;chr&gt; &quot;a&quot;, &quot;rv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;rv&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;,...
-## $ weight              &lt;dbl&gt; 0.262, 0.680, 0.153, 0.243, 0.227, 1.514, 0.200...
-## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
-## $ approve             &lt;dbl&gt; 45.0, 46.0, 42.1, 45.0, 46.0, 36.0, 57.0, 42.3,...
-## $ disapprove          &lt;dbl&gt; 45.0, 37.0, 45.2, 46.0, 45.0, 44.0, 43.0, 45.8,...
-## $ adjusted_approve    &lt;dbl&gt; 45.8, 45.4, 43.2, 45.8, 46.8, 37.6, 51.6, 43.4,...
-## $ adjusted_disapprove &lt;dbl&gt; 43.6, 38.2, 43.8, 44.6, 43.6, 42.8, 44.5, 44.4,...
-## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
-## $ tracking            &lt;lgl&gt; TRUE, NA, TRUE, TRUE, TRUE, NA, TRUE, TRUE, TRU...
-## $ url                 &lt;chr&gt; &quot;http://www.gallup.com/poll/201617/gallup-daily...
-## $ poll_id             &lt;dbl&gt; 49253, 49249, 49426, 49262, 49236, 49260, 49266...
-## $ question_id         &lt;dbl&gt; 77265, 77261, 77599, 77274, 77248, 77272, 77278...
-## $ createddate         &lt;chr&gt; &quot;1/23/2017&quot;, &quot;1/23/2017&quot;, &quot;3/1/2017&quot;, &quot;1/24/201...
-## $ timestamp           &lt;chr&gt; &quot;15:13:24  6 Oct 2020&quot;, &quot;15:13:24  6 Oct 2020&quot;,...</code></pre>
-<pre class="r"><code># Use `lubridate` to fix dates, as they are given as characters.
+country_list &lt;- c(&quot;Brazil&quot;,&quot;India&quot;, &quot;China&quot;, &quot;Russian Federation&quot;, &quot;South Africa&quot;)</code></pre>
+<p>Now we are going to plot a graph for each Country that shows the figures of the five different components of the GDP along the years 1970 - 2017:</p>
+<ol style="list-style-type: decimal">
+<li>Gross Capital Formation</li>
+<li>Exports</li>
+<li>Government Expenditure</li>
+<li>Household Expenditure</li>
+<li>Imports</li>
+</ol>
+<pre class="r"><code>components &lt;- c(&quot;Gross capital formation&quot;,
+                &quot;Exports of goods and services&quot;,     
+                &quot;General government final consumption expenditure&quot;,
+                &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;,
+                &quot;Imports of goods and services&quot;)
 
-#Converting characters to dates
-approval_polllist$enddate &lt;- mdy(approval_polllist$enddate) 
-approval_polllist$startdate &lt;- mdy(approval_polllist$startdate) 
-approval_polllist$modeldate &lt;- mdy(approval_polllist$modeldate) 
-glimpse(approval_polllist)</code></pre>
-<pre><code>## Rows: 15,730
-## Columns: 22
-## $ president           &lt;chr&gt; &quot;Donald Trump&quot;, &quot;Donald Trump&quot;, &quot;Donald Trump&quot;,...
-## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All pol...
-## $ modeldate           &lt;date&gt; 2020-10-06, 2020-10-06, 2020-10-06, 2020-10-06...
-## $ startdate           &lt;date&gt; 2017-01-20, 2017-01-20, 2017-01-20, 2017-01-21...
-## $ enddate             &lt;date&gt; 2017-01-22, 2017-01-22, 2017-01-24, 2017-01-23...
-## $ pollster            &lt;chr&gt; &quot;Gallup&quot;, &quot;Morning Consult&quot;, &quot;Ipsos&quot;, &quot;Gallup&quot;,...
-## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;B/C&quot;, &quot;B-&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B+&quot;, &quot;C+&quot;, &quot;B-&quot;, &quot;...
-## $ samplesize          &lt;dbl&gt; 1500, 1992, 1632, 1500, 1500, 1190, 1500, 1651,...
-## $ population          &lt;chr&gt; &quot;a&quot;, &quot;rv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;rv&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;,...
-## $ weight              &lt;dbl&gt; 0.262, 0.680, 0.153, 0.243, 0.227, 1.514, 0.200...
-## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,...
-## $ approve             &lt;dbl&gt; 45.0, 46.0, 42.1, 45.0, 46.0, 36.0, 57.0, 42.3,...
-## $ disapprove          &lt;dbl&gt; 45.0, 37.0, 45.2, 46.0, 45.0, 44.0, 43.0, 45.8,...
-## $ adjusted_approve    &lt;dbl&gt; 45.8, 45.4, 43.2, 45.8, 46.8, 37.6, 51.6, 43.4,...
-## $ adjusted_disapprove &lt;dbl&gt; 43.6, 38.2, 43.8, 44.6, 43.6, 42.8, 44.5, 44.4,...
-## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
-## $ tracking            &lt;lgl&gt; TRUE, NA, TRUE, TRUE, TRUE, NA, TRUE, TRUE, TRU...
-## $ url                 &lt;chr&gt; &quot;http://www.gallup.com/poll/201617/gallup-daily...
-## $ poll_id             &lt;dbl&gt; 49253, 49249, 49426, 49262, 49236, 49260, 49266...
-## $ question_id         &lt;dbl&gt; 77265, 77261, 77599, 77274, 77248, 77272, 77278...
-## $ createddate         &lt;chr&gt; &quot;1/23/2017&quot;, &quot;1/23/2017&quot;, &quot;3/1/2017&quot;, &quot;1/24/201...
-## $ timestamp           &lt;chr&gt; &quot;15:13:24  6 Oct 2020&quot;, &quot;15:13:24  6 Oct 2020&quot;,...</code></pre>
-<pre class="r"><code>#Net approval  
+components2 &lt;- c(&quot;Gross Capital Formation&quot;,
+                 &quot;Exports&quot;,
+                 &quot;Government Expenditure&quot;,
+                 &quot;Household Expenditure&quot;,
+                 &quot;Imports&quot;)
 
-approval_polllistx &lt;- approval_polllist %&gt;%
-  filter(subgroup == &quot;Voters&quot;) %&gt;%
-  mutate(Week_Number=isoweek(enddate),Year = year(enddate),Net_Approval = approve-disapprove)
+BRICS_GDP &lt;- tidy_GDP_data %&gt;% 
+  filter(Country %in% country_list) %&gt;%
+  filter(IndicatorName %in% components) 
 
 
-#With all needed columns
-approval_polllistc &lt;- approval_polllistx %&gt;%
-  select(Year, Net_Approval, Week_Number,samplesize )
+gdp1 &lt;- ggplot(data = BRICS_GDP, aes(x = Year, y = Sum, group = IndicatorName, color = IndicatorName)) +
+  geom_line(size = 0.7)+
+  facet_wrap(~Country)+
+  scale_color_manual(
+            values=c(&quot;#078E10&quot;, &quot;#4E53EE&quot;, &quot;#F0791D&quot;, &quot;#17D0C3&quot;, &quot;#F50A48&quot;),
+            name=&quot;GDP Components&quot;,
+            labels= components2)+
+            labs(x = &quot;&quot;, y = &quot;USD Billions&quot;,
+            title = &quot;BRICS - GDP Components Analysis&quot;,
+            subtitle = &quot;From 1970 to 2017&quot;)+
+  theme(legend.position = &quot;top&quot;)+
+  theme_bw()+ 
+  theme(plot.title = element_text(face = &quot;bold&quot;))
 
+gdp1</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Some observations about the graph above:</p>
+</blockquote>
+<blockquote>
+<ol style="list-style-type: decimal">
+<li>We have data from The Russian Federation just from 1990 ahead when the CCCP terminated</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>It is impressive the growth of all figures for China mainly in the begging in 2000</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3" style="list-style-type: decimal">
+<li>South Africa is way smaller than the other economies</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4" style="list-style-type: decimal">
+<li>In the last 10 years the compounding effect is becoming more visible in India</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5" style="list-style-type: decimal">
+<li>The growth of Brazil doesn’t seem too exciting but is more steady</li>
+</ol>
+</blockquote>
+<hr />
+<p>Secondly, recall that GDP is the sum of Household Expenditure (Consumption <em>C</em>), Gross Capital Formation (business investment <em>I</em>), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator <code>Gross Domestic Product (GDP)</code> in your dataframe, I would like you to calculate it given its components discussed above.</p>
+<pre class="r"><code>components3 &lt;- c(&quot;Gross capital formation&quot;, &quot;Exports of goods and services&quot;,
+                 &quot;General government final consumption expenditure&quot;,
+                 &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;,
+                 &quot;Imports of goods and services&quot;,
+                 &quot;Gross Domestic Product (GDP)&quot;)
 
-#Modified with SD
+BRICS_GDP &lt;- data_renamed %&gt;% 
+  filter(Country %in% country_list)
 
-approval_polllist0 &lt;- approval_polllistc %&gt;%
-  group_by(Week_Number,Year) %&gt;%
-  summarise(avg_net = mean(Net_Approval,na.rm=TRUE),totalsize =   sum(samplesize),std=sd(Net_Approval,na.rm=TRUE),numberpolls=count(Week_Number))
+BRICS_GDP_1&lt;- BRICS_GDP %&gt;% 
+  mutate(&quot;Net_export&quot; = EGS - IGS ) 
 
-#Confidence interval
+BRICS_GDP_2 &lt;- BRICS_GDP_1 %&gt;% 
+  mutate(&quot;GDP_calculated&quot; = HCE + GOV + GCF + Net_export)
+BRICS_GDP_3 &lt;- BRICS_GDP_2 %&gt;% 
+  mutate(&quot;GDP_difference_per&quot; = (GDP - GDP_calculated) / GDP)
 
-approval_polllist0 &lt;- approval_polllist0 %&gt;%
-  drop_na()
+gdp_difference &lt;- ggplot(data = BRICS_GDP_3, aes(x = Year, y = GDP_difference_per)) + 
+  geom_line(color = &quot;#211D1D&quot;, size = 1.0)+
+  facet_wrap(~Country)+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(-0.13,0.15))+
+  theme_bw()+
+  labs(y = &quot; Delta released - calculated GDP &quot;,
+       title = &quot;Difference between Released GDP and calculated GBP&quot;,
+       subtitle = &quot;All BRICS suffer with variability over realeased and calculated GBP&quot;)+ 
+      theme(plot.title = element_text(face = &quot;bold&quot;))
 
-approval_polllist0 &lt;- approval_polllist0 %&gt;%
-  mutate(tvalues =qt(0.975, numberpolls-1))
+gdp_difference</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp_difference-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>In the above graph is possible to observe a lot of mismatch between the GDP figures released by governments and the GDP calculated by ourselves.
+It shows why investors are more careful before invest in Developing Economies. But the good news is the the differences are converging towards zero with the years.</p>
+</blockquote>
+<hr />
+<p>Now we want to observe how the different components of the GDP changed through the years for each one of the BRICS.
+On this graph is possible to see if the country had surplus of deficit, measured by net exports. It is also possible to observe the participation of the government on the economy through a expansionary or contractionary expenditure policy.</p>
+<pre class="r"><code>components4 &lt;- c(&quot;Government Expenditure&quot;, &quot;Gross capital formation&quot;, &quot;Household Expenditure&quot;, &quot;Net Exports&quot;)
 
-approval_polllist0 &lt;- approval_polllist0 %&gt;%
-  mutate(lower_bound = avg_net-tvalues*std/sqrt(numberpolls),upper_bound =avg_net+tvalues*std/sqrt(numberpolls))</code></pre>
-<div id="create-a-plot" class="section level2">
-<h2>Create a plot</h2>
-<pre class="r"><code>plot2 &lt;- ggplot(approval_polllist0,aes(x=Week_Number,y=avg_net))+
-          geom_point(aes(colour=Year))+
-          geom_line(aes(colour=Year,group=Year))+
-          geom_ribbon(aes(ymin=lower_bound,ymax=upper_bound,colour=Year),alpha=0.1)+
-          scale_y_continuous(breaks=seq(-20,7.5,2.5))+
-          scale_x_continuous(breaks=seq(0,52,13))+
-        geom_hline(yintercept=0,color = &quot;darkgoldenrod1&quot;)+
-                   labs(title=&quot;&quot;,
-                     x=&quot;Week&quot;,
-                     y=&quot;Average Net Approval (%)&quot;)+
-   
-            facet_wrap(.~Year, nrow=2)+theme_bw()+
-            theme(panel.background = element_rect(colour=&quot;White&quot;),
-                        axis.ticks.x = element_blank(),
-                  legend.position = &quot;none&quot;)
+BRICS_GDP_4 &lt;- BRICS_GDP_3 %&gt;% 
+  mutate(&quot;GOV_per&quot; = (GOV) / GDP) %&gt;% 
+  mutate(&quot;GCF_per&quot; = (GCF) / GDP) %&gt;% 
+  mutate(&quot;HCE_per&quot; = (HCE) / GDP) %&gt;% 
+  mutate(&quot;Net_export_per&quot; = (Net_export) / GDP) %&gt;% 
+  select(Country, Year,  GOV_per,GCF_per,HCE_per,Net_export_per)
 
+BRICS_GDP_5 &lt;- BRICS_GDP_4 %&gt;% 
+  pivot_longer(cols = (3:6), names_to = &quot;Components&quot;, values_to = &quot;Proportion&quot; ) 
 
-plot2</code></pre>
-<p><img src="/blogs/blog4_files/figure-html/unnamed-chunk-2-1.png" width="648" style="display: block; margin: auto;" /></p>
-</div>
-</div>
+gdp2 &lt;- ggplot(data = BRICS_GDP_5, aes(x = Year, y = Proportion, group = Components, color = Components)) +
+  geom_line(size = 1)+
+  facet_wrap(~Country)+
+  scale_color_manual( values=c(&quot;#F0791D&quot;, &quot;#078E10&quot;, &quot;#17D0C3&quot;, &quot;#4E53EE&quot;),
+                      name=&quot;GDP Components&quot;,
+                      labels= components4)+
+       labs(x = &quot;Year&quot;, y = &quot;% of the GDP&quot;,
+       title = &quot;BRICS - Expansionist or Contracionist Fiscal Policy?&quot;,
+       subtitle = &quot;Diffent GDP compositions depending on Country and Time&quot;,
+       caption = &quot;Source: United Nations&quot;) +
+  theme(legend.position = &quot;right&quot;)+
+  theme_bw()+
+  coord_equal(ratio = 80) + 
+  theme(plot.title = element_text(face = &quot;bold&quot;))
+
+gdp2</code></pre>
+<p><img src="/blogs/blog3_files/figure-html/gdp2-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>The graph above is super interesting because it give us so many information about the Economy and Politics about each country:</p>
+</blockquote>
+<blockquote>
+<ol style="list-style-type: decimal">
+<li>Brazil: The participation of the household consumption in economy is growing because of the growth of per-capta GDP and the broader access of credit for the families. The government expenditure is slowly going down. The fact is that the Debt/GDP of the country is already high and the government need primary surpluses to pay this debt. Brazil is a big commodities exporters but the levels of net exports are volatile because it has big influence of FX rates and commodities demand.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>China: Since the 70’s the government took responsibility to modernize de country and create the infrastructure necessary to economic development and since 2002-2003 the government expenditure is the largest amount of the GDP. In the last 8 years the household consumption is increasing slowly in relation to Government expenditure. Gross capital formation is stable and the net exports depends of the FX rate and prices.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3" style="list-style-type: decimal">
+<li>India: Until 1990 the distribution of the GDP components stayed almost steady. From 2000 onward, the government increase it’s expenditures, probably trying to follow a path like China, investing on infrastructure to increase the productivity and growth of the GDP of the country.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4" style="list-style-type: decimal">
+<li>Russia: From 1990-2000 the country had a major change after the fall of CCCP going to a open economy. The share of government expenditure dropped and the families expenditure increased. Since 2005, the trends seems to be maintained expect of net exports because Russia exports Oil&amp;Gas and the price of the commodity is volatile and politics are involved.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5" style="list-style-type: decimal">
+<li>South Africa: The country saw the ascension of household expenditure from 45% (1970) to ~60% (2015). The gross capital formation seems to be stabilized around 20% and the government expenditures have a negative correlation to the net exports.</li>
+</ol>
+</blockquote>
 
                         </div>
                     </section>
