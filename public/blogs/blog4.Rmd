@@ -7,7 +7,7 @@ description:
 draft: false
 image: pic17.jpg
 keywords: ""
-slug: blog3
+slug: blog4
 title: BRICS - Changes in GDP Components
 ---
 
