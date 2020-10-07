@@ -40,13 +40,14 @@ Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed 
     </item>
     
     <item>
-      <title>How Trump&#39;s net approval rate oscilated on his mandate?</title>
+      <title>TfL Bikes - How to manage it?</title>
       <link>/blogs/blog6/</link>
       <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
       
       <guid>/blogs/blog6/</guid>
-      <description>The goal is to observe how the net approval (Approval - Disapproval) of presidentDonald Trump. We analyze the data from the first week of Trump’s mandate to the week39 of his 4th year as the president of the United States
-Challenge 2: Excess rentals in TfL bike sharingRecall the TfL data on how many bikes were hired every single day. We can get the latest data by running the following</description>
+      <description>Our goal is to calculate the expected monthly number of TfL bikes rentals.After that, compare the 2015-2019 against 2020 and observe how the COVID-19 situation impacted the bike rental on London City.
+Recall the TfL data on how many bikes were hired every single day. We can get the latest data by running the following
+url &amp;lt;- &amp;quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&amp;quot;# Download TFL data to temporary filehttr::GET(url, write_disk(bike.temp &amp;lt;- tempfile(fileext = &amp;quot;.</description>
     </item>
     
     <item>
