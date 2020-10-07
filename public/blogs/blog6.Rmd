@@ -7,7 +7,7 @@ description:
 draft: false
 image: pic18.png
 keywords: ""
-slug: blog4
+slug: blog6
 title: How Trump's net approval rate oscilated on his mandate?
 ---
 
@@ -47,83 +47,425 @@ library(infer)
 ```
 
 
-# Trump's Approval Margins
+# Challenge 2: Excess rentals in TfL bike sharing
 
-As we saw in class, fivethirtyeight.com has detailed data on [all polls that track the president's approval ](https://projects.fivethirtyeight.com/trump-approval-ratings)
+Recall the TfL data on how many bikes were hired every single day. We can get the latest data by running the following
 
-```{r, cache=TRUE}
-# Import approval polls data
+```{r, get_tfl_data, cache=TRUE}
+url <- "https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx"
 
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp <- tempfile(fileext = ".xlsx")))
 
-# or directly off fivethirtyeight website
-approval_polllist <- read_csv('https://projects.fivethirtyeight.com/trump-approval-data/approval_polllist.csv') 
+# Use read_excel to read it as dataframe
+bike0 <- read_excel(bike.temp,
+                   sheet = "Data",
+                   range = cell_cols("A:B"))
 
-glimpse(approval_polllist)
-
-# Use `lubridate` to fix dates, as they are given as characters.
-
-#Converting characters to dates
-approval_polllist$enddate <- mdy(approval_polllist$enddate) 
-approval_polllist$startdate <- mdy(approval_polllist$startdate) 
-approval_polllist$modeldate <- mdy(approval_polllist$modeldate) 
-glimpse(approval_polllist)
-
-#Net approval  
-
-approval_polllistx <- approval_polllist %>%
-  filter(subgroup == "Voters") %>%
-  mutate(Week_Number=isoweek(enddate),Year = year(enddate),Net_Approval = approve-disapprove)
-
-
-#With all needed columns
-approval_polllistc <- approval_polllistx %>%
-  select(Year, Net_Approval, Week_Number,samplesize )
-
-
-#Modified with SD
-
-approval_polllist0 <- approval_polllistc %>%
-  group_by(Week_Number,Year) %>%
-  summarise(avg_net = mean(Net_Approval,na.rm=TRUE),totalsize =   sum(samplesize),std=sd(Net_Approval,na.rm=TRUE),numberpolls=count(Week_Number))
-
-#Confidence interval
-
-approval_polllist0 <- approval_polllist0 %>%
-  drop_na()
-
-approval_polllist0 <- approval_polllist0 %>%
-  mutate(tvalues =qt(0.975, numberpolls-1))
-
-approval_polllist0 <- approval_polllist0 %>%
-  mutate(lower_bound = avg_net-tvalues*std/sqrt(numberpolls),upper_bound =avg_net+tvalues*std/sqrt(numberpolls))
-
-
-
-```
-
-## Create a plot
-
-```{r}
-plot2 <- ggplot(approval_polllist0,aes(x=Week_Number,y=avg_net))+
-          geom_point(aes(colour=Year))+
-          geom_line(aes(colour=Year,group=Year))+
-          geom_ribbon(aes(ymin=lower_bound,ymax=upper_bound,colour=Year),alpha=0.1)+
-          scale_y_continuous(breaks=seq(-20,7.5,2.5))+
-          scale_x_continuous(breaks=seq(0,52,13))+
-        geom_hline(yintercept=0,color = "darkgoldenrod1")+
-                   labs(title="",
-                     x="Week",
-                     y="Average Net Approval (%)")+
-   
-            facet_wrap(.~Year, nrow=2)+theme_bw()+
-            theme(panel.background = element_rect(colour="White"),
-                        axis.ticks.x = element_blank(),
-                  legend.position = "none")
-
-
-plot2
-
+# change dates to get year, month, and week
+bike <- bike0 %>% 
+  clean_names() %>% 
+  rename (bikes_hired = number_of_bicycle_hires) %>% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))
 ```
 
 
-> The graphs shows that the net approval was negative most of the times during the last 4 years of Trump's office. The dispersion of the mean also changed depending of the number of polls and standard deviation of the results. Overall, Trump don't have a great approval by the American People.
+
+We can easily create a facet grid that plots bikes hired by month and year.
+
+```{r tfl_month_year_grid, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "tfl_distributions_monthly.png"), error = FALSE)
+```
+
+The distribution of bikes hired are relatively flat in May and June in 2020 compared with precious years. This has something to do with the COVID-19 restrictions.
+
+Now we are going to look at the monthly excess bike rentals and weekly excess bike rentals from 2015-2019. Below are the required replication of 2 figures.
+
+##Replication of figures
+
+```{r tfl_absolute_monthly_change, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "tfl_monthly.png"), error = FALSE)
+```
+
+
+```{r tfl_percent_change, echo=FALSE, out.width="100%"}
+knitr::include_graphics(here::here("images", "tfl_weekly.png"), error = FALSE)
+```
+
+The first one looks at the excess monthly rentals, which is the difference between actual monthly rentals and the expected monthly rentals. And we use the average number to calculated the monthly rentals. The red areas stand for negative excess rentals, and the green areas stand for positive excess rentals.
+
+```{r,tfl_absolute_monthly_changes,out.width="100%"}
+#Monthly rental changes
+#compute the actual rentals - using mean
+m_avg_bike_act<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,month)%>%
+  summarise(month_avg=mean(bikes_hired))
+
+#compute the expected rentals - using mean
+m_avg_bike<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(month)%>% 
+  summarise(month_avg_exp=mean(bikes_hired))%>%
+  left_join(y=m_avg_bike_act,join_by=month)%>%
+  mutate(excess_month=month_avg-month_avg_exp)
+
+#Replicate Figure1 - Graph for monthly changes
+ggplot(m_avg_bike,aes(x=month,y=month_avg,group=1))+
+  geom_line()+
+  geom_line(aes(y=month_avg_exp,group=1),
+            color="blue",
+            size=1)+
+  
+  #color the monthly excess rentals each year
+  geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month<0,month_avg,month_avg_exp)),
+              fill=alpha("#CB454A",alpha=0.5))+
+  geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month>0,month_avg,month_avg_exp)),
+              fill=alpha("#7DCD85",alpha=0.5))+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Monthly changes in TfL bike rentals",
+       subtitle="Change from monthly average shown in blue \nand calculated between 2015-2019",
+       x=NULL,
+       y="Bike rentals",
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the theme
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6),
+        axis.ticks= element_blank())+
+  NULL
+```
+
+
+The second one looks at percentage changes from the expected level of weekly rentals. And we use the average number for calculation as well. Besides, we add two grey-shaded rectangles, which correspond to the second and fourth quarters.
+
+```{r,out.width="100%"}
+#Weekly rental changes
+#compute the actual rentals - using mean
+w_avg_bike_act<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,week)%>%
+  summarise(week_avg=mean(bikes_hired))
+
+#compute the expected rentals - using mean
+w_avg_bike<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(week)%>% 
+  summarise(week_avg_exp=mean(bikes_hired))%>%
+  left_join(y=w_avg_bike_act,join_by=week)%>%
+  mutate(excess_week_pct=week_avg/week_avg_exp-1)
+
+#Replicate Graph for monthly changes
+ggplot(w_avg_bike,aes(x=week,y=excess_week_pct,group=1))+
+  
+  #Add gray-shaded rectangles for Q2 & Q4
+  geom_rect(aes(xmin=13,xmax=26,ymin=-Inf,ymax=Inf),
+            fill=alpha("#EDEDED",alpha=0.5),
+            color="#EDEDED",
+            show.legend = FALSE)+
+  geom_rect(aes(xmin=39,xmax=53,ymin=-Inf,ymax=Inf),
+            fill=alpha("#EDEDED",alpha=0.5),
+            color="#EDEDED",
+            show.legend = FALSE)+
+  
+  #plot %change of weekly average rentals
+  geom_line(size=0.5,color="black")+
+  
+  #color the %weekly excess rentals
+  geom_ribbon(aes(ymin=0,ymax=if_else(excess_week_pct<0,excess_week_pct,0)),
+              fill=alpha("#CB454A",alpha=0.5))+
+  geom_ribbon(aes(ymin=0,ymax=if_else(excess_week_pct>0,excess_week_pct,0)),
+              fill=alpha("#7DCD85",alpha=0.5))+
+  
+  #Add rug bars at the bottom of each panel
+  geom_rug(sides="b",
+           aes(color=if_else(excess_week_pct>0,alpha("#CB454A",alpha=0.5),alpha("#7DCD85",alpha=0.5))),
+           show.legend = FALSE)+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Weekly changes in TfL bike rentals",
+       subtitle="% change from weekly averages \ncalculated between 2015-2019",
+       x="week",
+       y=NULL,
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the axis and the theme
+  scale_y_continuous(labels =scales::percent)+
+  scale_x_continuous(breaks = c(13,26,39,53),labels = c("13","26","39","53"))+
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.ticks= element_blank(),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6))+
+  NULL
+
+```
+
+According to the figures above, we could see that both the monthly expected rentals and the weekly expected rentals are much higher than actual rentals earlier in 2020, yet situation reversed in May and June. The easing COVID-19 restrictions from May may lead to this reverse. 
+
+Since the mean of bikes hired may be more affected by the outliers, especially in 2020 considering the pandemic's impacts, we re-estimate based on the median of bikes hired and try to see if there's any difference in the result.
+
+##Re-estimations using median
+
+Here's the result of absolute monthly changes from 2015-2020.
+
+```{r,tfl_absolute_monthly_changes_using_median,out.width="100%"}
+
+#Monthly rental changes
+#compute the actual rentals - using median
+m_avg_bike_act2<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,month)%>%
+  summarise(month_avg=median(bikes_hired))
+
+#compute the expected rentals - using median
+m_avg_bike2<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(month)%>% 
+  summarise(month_avg_exp=median(bikes_hired))%>%
+  left_join(y=m_avg_bike_act2,join_by=month)%>%
+  mutate(excess_month=month_avg-month_avg_exp)
+
+#Replicate Figure1 - Graph for monthly changes
+ggplot(m_avg_bike2,aes(x=month,y=month_avg,group=1))+
+  geom_line()+
+  geom_line(aes(y=month_avg_exp,group=1),
+            color="blue",
+            size=1)+
+  
+  #color the monthly excess rentals each year
+  geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month<0,month_avg,month_avg_exp)),
+              fill=alpha("#CB454A",alpha=0.5))+
+  geom_ribbon(aes(ymin=month_avg_exp,ymax=if_else(excess_month>0,month_avg,month_avg_exp)),
+              fill=alpha("#7DCD85",alpha=0.5))+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Monthly changes in TfL bike rentals",
+       subtitle="Change from monthly median shown in blue \nand calculated between 2015-2019",
+       x=NULL,
+       y="Bike rentals",
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the theme
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6),
+        axis.ticks= element_blank())+
+  NULL
+```
+
+As you can see, although the actual monthly rentals in March and April in 2020 are still far below the expectation, the monthly excess rentals calculated in median are less than that calculated in mean. And this also suggests that the number of hired bikes came back to the normal level in July,2020, which is also consistent to the distribution of bikes hired per month.
+
+Same conclusions could be driven in the weekly excess rentals.
+
+```{r,out.width="100%"}
+#Weekly rental changes
+#compute the actual rentals - using median
+w_avg_bike_act2<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,week)%>%
+  summarise(week_avg=median(bikes_hired))
+
+#compute the expected rentals - using median
+w_avg_bike2<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(week)%>% 
+  summarise(week_avg_exp=median(bikes_hired))%>%
+  left_join(y=w_avg_bike_act2,join_by=week)%>%
+  mutate(excess_week_pct=week_avg/week_avg_exp-1)
+
+#Replicate Graph for monthly changes
+ggplot(w_avg_bike2,aes(x=week,y=excess_week_pct,group=1))+
+  
+  #Add gray-shaded rectangles for Q2 & Q4
+  geom_rect(aes(xmin=13,xmax=26,ymin=-Inf,ymax=Inf),
+            fill=alpha("#EDEDED",alpha=0.5),
+            color="#EDEDED",
+            show.legend = FALSE)+
+  geom_rect(aes(xmin=39,xmax=53,ymin=-Inf,ymax=Inf),
+            fill=alpha("#EDEDED",alpha=0.5),
+            color="#EDEDED",
+            show.legend = FALSE)+
+  
+  #plot %change of weekly average rentals
+  geom_line(size=0.5,color="black")+
+  
+  #color the %weekly excess rentals
+  geom_ribbon(aes(ymin=0,ymax=if_else(excess_week_pct<0,excess_week_pct,0)),
+              fill=alpha("#CB454A",alpha=0.5))+
+  geom_ribbon(aes(ymin=0,ymax=if_else(excess_week_pct>0,excess_week_pct,0)),
+              fill=alpha("#7DCD85",alpha=0.5))+
+  
+  #Add rug bars at the bottom of each panel
+  geom_rug(sides="b",
+           aes(color=if_else(excess_week_pct>0,alpha("#CB454A",alpha=0.5),alpha("#7DCD85",alpha=0.5))),
+           show.legend = FALSE)+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Weekly changes in TfL bike rentals",
+       subtitle="% change from weekly medians \ncalculated between 2015-2019",
+       x="week",
+       y=NULL,
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the axis and the theme
+  scale_y_continuous(labels =scales::percent)+
+  scale_x_continuous(breaks = c(13,26,39,53),labels = c("13","26","39","53"))+
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.ticks= element_blank(),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6))+
+  NULL
+
+```
+
+
+Here's the difference between the monthly expected rentals calculated in different ways. Generally, the difference between monthly average and monthly median is negative, which suggests a left-skewed distribution. What's more, the difference of actual monthly rentals fluctuates a lot in 2020, and the difference of expected monthly rentals would be more stable because of the 5-year window.
+
+Again, similar conclusions could be found from the perspective of weekly rentals.
+
+```{r,difference_in_month,out.width="100%"}
+#compute difference in actual rentals - monthly
+m_diff_act<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,month)%>%
+  summarise(m_avg=mean(bikes_hired),
+            m_median=median(bikes_hired))%>%
+  mutate(act_avg_median_diff=m_avg-m_median)
+
+#compute difference in expected rentals - monthly
+m_diff<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(month)%>% 
+  summarise(m_avg_exp=mean(bikes_hired),
+            m_median_exp=median(bikes_hired))%>%
+  mutate(exp_avg_median_diff=m_avg_exp-m_median_exp)%>%
+  left_join(y=m_diff_act,join_by=month)
+
+#plot the differences
+ggplot(m_diff,aes(x=month,y=act_avg_median_diff,group=1))+
+  geom_line()+
+  geom_line(aes(x=month,y=exp_avg_median_diff),group=1,color="red",size=1)+
+  geom_hline(aes(yintercept=0),linetype="dashed")+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Difference in monthly average and monthly median: actual rentals and expected rentals",
+       subtitle="Difference in expected monthly rentals shown in red \nand calculated between 2015-2019",
+       x=NULL,
+       y="Bike rentals: Average-Median",
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the theme
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6),
+        axis.ticks= element_blank())+
+  NULL
+  
+```
+
+
+```{r,difference_in_week,out.width="100%"}
+#compute difference in actual rentals - weekly
+w_diff_act<-bike%>%
+  filter(year>=2015)%>%
+  group_by(year,week)%>%
+  summarise(w_avg=mean(bikes_hired),
+            w_median=median(bikes_hired))%>%
+  mutate(act_avg_median_diff=w_avg-w_median)
+
+#compute difference in expected rentals - monthly
+w_diff<-bike%>%
+  filter(year %in% c(2015:2019))%>% 
+  group_by(week)%>% 
+  summarise(w_avg_exp=mean(bikes_hired),
+            w_median_exp=median(bikes_hired))%>%
+  mutate(exp_avg_median_diff=w_avg_exp-w_median_exp)%>%
+  left_join(y=w_diff_act,join_by=week)
+
+#plot the differences
+ggplot(w_diff,aes(x=week,y=act_avg_median_diff,group=1))+
+  geom_line()+
+  geom_line(aes(x=week,y=exp_avg_median_diff),group=1,color="red",size=1)+
+  geom_hline(aes(yintercept=0),linetype="dashed")+
+  facet_wrap(~year)+
+  
+  #Add titles and caption
+  labs(title="Difference in weekly average and weekly median: actual rentals and expected rentals",
+       subtitle="Difference in expected weekly rentals shown in red \nand calculated between 2015-2019",
+       x="Week",
+       y="Bike rentals: Average-Median",
+       caption="Source: TfL, London Data Store")+
+  
+  #Adjust the theme
+  theme(panel.border = element_blank(),
+        panel.background = element_blank(),
+        strip.background = element_blank(),
+        panel.grid.minor = element_line(colour="#ECECEC"),
+        panel.grid.major = element_line(colour="#ECECEC"),
+        aspect.ratio = 1,
+        plot.title = element_text(size=10,face="bold"),
+        plot.subtitle = element_text(size=8),
+        plot.caption = element_text(size=4),
+        strip.text = element_text(size=4),
+        axis.text= element_text(size=4),
+        axis.title = element_text(size=6),
+        axis.ticks= element_blank())+
+  NULL
+```
+
+Overall, using the median might be a better way to calculate the expected rentals since it's more stable and hardly affected by the outliers.
+

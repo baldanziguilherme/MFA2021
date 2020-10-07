@@ -41,13 +41,12 @@ Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed 
     
     <item>
       <title>How Trump&#39;s net approval rate oscilated on his mandate?</title>
-      <link>/blogs/blog4/</link>
+      <link>/blogs/blog6/</link>
       <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
       
-      <guid>/blogs/blog4/</guid>
+      <guid>/blogs/blog6/</guid>
       <description>The goal is to observe how the net approval (Approval - Disapproval) of presidentDonald Trump. We analyze the data from the first week of Trump’s mandate to the week39 of his 4th year as the president of the United States
-Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed data on all polls that track the president’s approval
-# Import approval polls data# or directly off fivethirtyeight websiteapproval_polllist &amp;lt;- read_csv(&amp;#39;https://projects.</description>
+Challenge 2: Excess rentals in TfL bike sharingRecall the TfL data on how many bikes were hired every single day. We can get the latest data by running the following</description>
     </item>
     
     <item>
