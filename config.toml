@@ -111,9 +111,9 @@ disqusShortname = ""
 
 
     [[params.tiles.showcase]]
-      title = "Ipsum"
-      subtitle = "Nisl Sed Aliquam"
-      image = "pic04.jpg"
+      title = "Do American People Aprove Trump?"
+      subtitle = "How the net aprovation of the President oscilate through the mandate"
+      image = "pic20.jpg"
       url = "blogs/blog4"
 
 #    [[params.tiles.showcase]]
