@@ -19,6 +19,27 @@ The GDP data we will look at is from the United Nations’ National Accounts Mai
     </item>
     
     <item>
+      <title>Climate Change - Reallity or Illusion?</title>
+      <link>/blogs/blog5/</link>
+      <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
+      
+      <guid>/blogs/blog5/</guid>
+      <description>Climate change and temperature anomaliesIf we wanted to study climate change, we can find data on the Combined Land-Surface Air and Sea-Surface Water Temperature Anomalies in the Northern Hemisphere at NASA’s Goddard Institute for Space Studies. The tabular data of temperature anomalies can be found here
+To define temperature anomalies you need to have a reference, or base, period which NASA clearly states that it is the period between 1951-1980.</description>
+    </item>
+    
+    <item>
+      <title>How Trump&#39;s net approval rate oscilated on his mandate?</title>
+      <link>/blogs/blog4/</link>
+      <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
+      
+      <guid>/blogs/blog4/</guid>
+      <description>The goal is to observe how the net approval (Approval - Disapproval) of presidentDonald Trump. We analyze the data from the first week of Trump’s mandate to the week39 of his 4th year as the president of the United States
+Trump’s Approval MarginsAs we saw in class, fivethirtyeight.com has detailed data on all polls that track the president’s approval
+# Import approval polls data# or directly off fivethirtyeight websiteapproval_polllist &amp;lt;- read_csv(&amp;#39;https://projects.</description>
+    </item>
+    
+    <item>
       <title>How Trump&#39;s net approval rate oscilated on his mandate?</title>
       <link>/blogs/blog4/</link>
       <pubDate>Tue, 31 Oct 2017 22:26:13 -0500</pubDate>
